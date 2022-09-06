@@ -26,7 +26,7 @@ public class Result {
     @NotNull
     @Contract("_ -> new")
     public static Result success(Object data) {
-        return new Result(true, 200, null, data);
+        return new Result(true, 200, "success", data);
     }
 
     @NotNull

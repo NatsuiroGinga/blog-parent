@@ -42,13 +42,13 @@ public class SSOServiceImpl implements SSOService {
     @Override
     public Result login(@NotNull LoginParam loginParam) {
 
-        /**
-         * 1. 检查参数是否合法
-         * 2. 根据用户名和密码去user表中查询是否存在
-         * 3. 如果不存在, 登陆失败
-         * 4. 如果存在, 使用jwt生成token, 返回给前端
-         * 5. token放入redis当中, redis token: user 信息, 设置过期时间(登录认证的时候, 先认证字符串是否合法, 去redis认证是否存在)
-         * */
+        /*
+          1. 检查参数是否合法
+          2. 根据用户名和密码去user表中查询是否存在
+          3. 如果不存在, 登陆失败
+          4. 如果存在, 使用jwt生成token, 返回给前端
+          5. token放入redis当中, redis token: user 信息, 设置过期时间(登录认证的时候, 先认证字符串是否合法, 去redis认证是否存在)
+          */
 
         final String account = loginParam.getAccount();
         String password = loginParam.getPassword();
