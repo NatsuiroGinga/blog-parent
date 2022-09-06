@@ -1,0 +1,2 @@
+# blog-parent
+mszlu blog
