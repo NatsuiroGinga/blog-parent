@@ -15,6 +15,6 @@ public class RegisterParam {
 
     private String password;
 
-    private String token;
+    private String nickname;
 
 }

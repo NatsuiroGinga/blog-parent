@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class RegisterController {
 
     @Autowired
-    private SSOService SSOService;
+    private SSOService ssoService;
 
     @PostMapping
     public Result register(@RequestBody RegisterParam registerParam) {
-        
+        return ssoService.register(registerParam);
     }
 
 }

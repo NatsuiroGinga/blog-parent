@@ -2,6 +2,7 @@ package com.mszlu.blog.service;
 
 import com.mszlu.blog.vo.Result;
 import com.mszlu.blog.vo.params.LoginParam;
+import com.mszlu.blog.vo.params.RegisterParam;
 
 /**
  * 登录服务
@@ -28,4 +29,13 @@ public interface SSOService {
      * @return com.mszlu.blog.vo.Result
      **/
     Result logout(String token);
+
+    /**
+     * 注册
+     * @author ginga
+     * @Date 6/9/2022 上午7:24
+     * @param registerParam 注册参数
+     * @return com.mszlu.blog.vo.Result
+     **/
+    Result register(RegisterParam registerParam);
 }

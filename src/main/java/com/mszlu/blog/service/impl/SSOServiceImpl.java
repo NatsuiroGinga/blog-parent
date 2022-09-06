@@ -8,6 +8,7 @@ import com.mszlu.blog.utils.JWTUtils;
 import com.mszlu.blog.vo.ErrorCode;
 import com.mszlu.blog.vo.Result;
 import com.mszlu.blog.vo.params.LoginParam;
+import com.mszlu.blog.vo.params.RegisterParam;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -73,6 +74,53 @@ public class SSOServiceImpl implements SSOService {
     public Result logout(String token) {
         redisTemplate.delete("TOKEN_" + token);
         return Result.success(null);
+    }
+
+    @Override
+    public Result register(RegisterParam registerParam) {
+
+        /*
+        * 1. 判断参数是否合法
+        * 2. 判断账户是否存在. 存在, 返回账户已被注册
+        * 3. 账户不存在, 注册用户
+        * 4. 生成token
+        * 5. 存入redis并返回
+        * 6. 加上事务, 中间任何过程出现问题, 回滚
+        * */
+        final String account = registerParam.getAccount();
+        final String nickname = registerParam.getNickname();
+        final String password = registerParam.getPassword();
+        if (StringUtils.isBlank(account)
+        || StringUtils.isBlank(password)
+        || StringUtils.isBlank(nickname)) {
+
+            return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
+        }
+
+        SysUser sysUser = sysUserService.findUserByAccount(account);
+        if (sysUser != null) {
+            return Result.fail(ErrorCode.ACCOUNT_EXIST.getCode(), ErrorCode.ACCOUNT_EXIST.getMsg());
+        }
+
+        final SysUser user = new SysUser();
+        user.setNickname(nickname);
+        user.setAccount(account);
+        user.setPassword(DigestUtils.md5Hex(password + salt));
+        user.setAdmin(1);
+        user.setDeleted(0);
+        user.setAvatar("/static/img/logo.b3a48c0.png");
+        user.setEmail("");
+        user.setCreateDate(System.currentTimeMillis());
+        user.setSalt("");
+        user.setLastLogin(System.currentTimeMillis());
+        user.setStatus("");
+        sysUserService.save(user);
+
+        String token = JWTUtils.createToken(user.getId());
+        redisTemplate.opsForValue()
+                .set("TOKEN_" + token, JSON.toJSONString(user), 1, TimeUnit.DAYS);
+
+        return Result.success(token);
     }
 
     public static void main(String[] args) {

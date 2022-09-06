@@ -39,4 +39,8 @@ public interface SysUserService {
      * @return com.mszlu.blog.vo.Result
      **/
     Result findUserByToken(String token);
+
+    SysUser findUserByAccount(String account);
+
+    void save(SysUser user);
 }
