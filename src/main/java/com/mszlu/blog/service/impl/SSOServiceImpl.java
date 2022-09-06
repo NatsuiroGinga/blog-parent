@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
  * @Date 5/9/2022 下午8:02
  */
 @Service
+@Transactional
 public class SSOServiceImpl implements SSOService {
 
     @Autowired
@@ -78,7 +79,6 @@ public class SSOServiceImpl implements SSOService {
     }
 
     @Override
-    @Transactional
     public Result register(RegisterParam registerParam) {
 
         /*
