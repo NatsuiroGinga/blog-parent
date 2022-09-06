@@ -86,6 +86,6 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     public void save(SysUser user) {
-
+        sysUserMapper.insert(user);
     }
 }
