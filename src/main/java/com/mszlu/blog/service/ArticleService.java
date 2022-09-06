@@ -46,4 +46,13 @@ public interface ArticleService {
      * @return com.mszlu.blog.vo.Result
      **/
     Result listArchives();
+
+    /**
+     * 根据文章id查询内容
+     * @author ginga
+     * @Date 6/9/2022 下午6:06
+     * @param articleId 文章id
+     * @return com.mszlu.blog.vo.Result
+     **/
+    Result findArticleById(Long articleId);
 }

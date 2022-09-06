@@ -1,5 +1,7 @@
 package com.mszlu.blog.vo;
 
+import com.mszlu.blog.pojo.ArticleBody;
+import com.mszlu.blog.pojo.Category;
 import com.mszlu.blog.pojo.Tag;
 import lombok.Data;
 
@@ -30,6 +32,10 @@ public class ArticleVo {
 
     private String author;
 
+    private ArticleBodyVo body;
+
     private List<TagVo> tags;
+
+    private CategoryVo category;
 
 }

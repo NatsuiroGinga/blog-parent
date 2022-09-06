@@ -83,6 +83,18 @@ public class ArticleServiceImpl implements ArticleService{
         return Result.success(archivesList);
     }
 
+    @Override
+    public Result findArticleById(Long articleId) {
+
+        /*
+        * 1. 根据id查询文章信息
+        * 2. 根据bodyId 和 categoryId 去关联查询
+        * */
+
+
+        return null;
+    }
+
     private List<ArticleVo> copyList(@NotNull List<Article> records, boolean isTag, boolean isAuthor) {
 
         return records.stream()
