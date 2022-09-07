@@ -4,11 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mszlu.blog.dos.Archives;
+import com.mszlu.blog.mapper.ArticleBodyMapper;
 import com.mszlu.blog.pojo.Article;
+import com.mszlu.blog.pojo.ArticleBody;
 import com.mszlu.blog.service.ArticleService;
 import com.mszlu.blog.mapper.ArticleMapper;
+import com.mszlu.blog.service.CategoryService;
 import com.mszlu.blog.service.SysUserService;
 import com.mszlu.blog.service.TagService;
+import com.mszlu.blog.vo.ArticleBodyVo;
 import com.mszlu.blog.vo.ArticleVo;
 import com.mszlu.blog.vo.Result;
 import com.mszlu.blog.vo.params.PageParams;
@@ -90,21 +94,34 @@ public class ArticleServiceImpl implements ArticleService{
         * 1. 根据id查询文章信息
         * 2. 根据bodyId 和 categoryId 去关联查询
         * */
+        final Article article = articleMapper.selectById(articleId);
+        final ArticleVo articleVo = copy(article, true, true, true, true);
 
-
-        return null;
+        return Result.success(articleVo);
     }
 
     private List<ArticleVo> copyList(@NotNull List<Article> records, boolean isTag, boolean isAuthor) {
 
         return records.stream()
-                .map(article -> copy(article, isTag, isAuthor))
+                .map(article -> copy(article, isTag, isAuthor, false, false))
                 .collect(Collectors.toList());
 
     }
 
+    private List<ArticleVo> copyList(@NotNull List<Article> records, boolean isTag, boolean isAuthor,
+                                     boolean isBody, boolean isCategory) {
+
+        return records.stream()
+                .map(article -> copy(article, isTag, isAuthor, isBody, isCategory))
+                .collect(Collectors.toList());
+
+    }
+
+    @Autowired
+    private CategoryService categoryService;
+
     @NotNull
-    private ArticleVo copy(Article article, boolean isTag, boolean isAuthor) {
+    private ArticleVo copy(Article article, boolean isTag, boolean isAuthor, boolean isBody, boolean isCategory) {
 
         final ArticleVo articleVo = new ArticleVo();
         BeanUtils.copyProperties(article, articleVo);
@@ -122,7 +139,29 @@ public class ArticleServiceImpl implements ArticleService{
             articleVo.setAuthor(sysUserService.findUserById(authorId).getNickname());
         }
 
+        if (isBody) {
+            final Long bodyId = article.getBodyId();
+            articleVo.setBody(findArticleBodyById(bodyId));
+        }
+
+        if (isCategory) {
+            final Integer categoryId = article.getCategoryId();
+            articleVo.setCategory(categoryService.findCategoryById(categoryId));
+        }
+
         return articleVo;
+    }
+
+    @Autowired
+    private ArticleBodyMapper articleBodyMapper;
+    @NotNull
+    private ArticleBodyVo findArticleBodyById(Long bodyId) {
+
+        final ArticleBody articleBody = articleBodyMapper.selectById(bodyId);
+        final ArticleBodyVo articleBodyVo = new ArticleBodyVo();
+        articleBodyVo.setContent(articleBody.getContent());
+
+        return articleBodyVo;
     }
 
 }
