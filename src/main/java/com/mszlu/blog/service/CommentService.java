@@ -1,6 +1,7 @@
 package com.mszlu.blog.service;
 
 import com.mszlu.blog.vo.Result;
+import com.mszlu.blog.vo.params.CommentParam;
 
 /**
  * @author ginga
@@ -18,4 +19,13 @@ public interface CommentService {
      * @return com.mszlu.blog.vo.Result
      **/
     Result commentsById(Long id);
+
+    /**
+     * 评论
+     * @author ginga
+     * @Date 8/9/2022 上午9:52
+     * @param commentParam 评论
+     * @return com.mszlu.blog.vo.Result
+     **/
+    Result comment(CommentParam commentParam);
 }

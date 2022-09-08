@@ -3,11 +3,14 @@ package com.mszlu.blog.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mszlu.blog.mapper.CommentMapper;
 import com.mszlu.blog.pojo.Comment;
+import com.mszlu.blog.pojo.SysUser;
 import com.mszlu.blog.service.CommentService;
 import com.mszlu.blog.service.SysUserService;
+import com.mszlu.blog.utils.UserThreadLocal;
 import com.mszlu.blog.vo.CommentVo;
 import com.mszlu.blog.vo.Result;
 import com.mszlu.blog.vo.UserVo;
+import com.mszlu.blog.vo.params.CommentParam;
 import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +52,30 @@ public class CommentServiceImpl implements CommentService {
         List<CommentVo> commentVos = copyList(comments);
 
         return Result.success(commentVos);
+    }
+
+    @Override
+    public Result comment(@NotNull CommentParam commentParam) {
+        final SysUser sysUser = UserThreadLocal.get();
+        final Comment comment = new Comment();
+        comment.setAuthorId(sysUser.getId());
+        comment.setArticleId(commentParam.getArticleId());
+        comment.setContent(comment.getContent());
+        comment.setCreateDate(System.currentTimeMillis());
+        final Long parent = commentParam.getParent();
+
+        if (parent == null || parent == 0) {
+            comment.setLevel(1);
+        } else {
+            comment.setLevel(2);
+        }
+
+        comment.setParentId(parent == null ? 0 : parent);
+        final Long toUserId = commentParam.getToUserId();
+        comment.setToUid(toUserId);
+        commentMapper.insert(comment);
+
+        return Result.success(null);
     }
 
     @Contract(pure = true)

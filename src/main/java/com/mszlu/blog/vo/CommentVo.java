@@ -1,5 +1,7 @@
 package com.mszlu.blog.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mszlu.blog.pojo.Comment;
 import lombok.Data;
 
@@ -14,6 +16,8 @@ import java.util.List;
 @Data
 public class CommentVo {
 
+    // 序列化id转化为string, 防止传到前端精度损失
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     private UserVo author;
