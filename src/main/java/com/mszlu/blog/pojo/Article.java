@@ -15,6 +15,8 @@ import lombok.Data;
 @TableName(value ="ms_article")
 @Data
 public class Article implements Serializable {
+
+    public static Integer Article_Common = 0;
     /**
      * 
      */
@@ -64,7 +66,7 @@ public class Article implements Serializable {
     /**
      * 类别id
      */
-    private Integer categoryId;
+    private Long categoryId;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 5L;

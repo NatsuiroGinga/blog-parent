@@ -1,8 +1,7 @@
 package com.mszlu.blog.service;
 
-import com.mszlu.blog.pojo.Article;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.mszlu.blog.vo.Result;
+import com.mszlu.blog.vo.params.ArticleParam;
 import com.mszlu.blog.vo.params.PageParams;
 
 /**
@@ -55,4 +54,6 @@ public interface ArticleService {
      * @return com.mszlu.blog.vo.Result
      **/
     Result findArticleById(Long articleId);
+
+    Result publish(ArticleParam articleParam);
 }

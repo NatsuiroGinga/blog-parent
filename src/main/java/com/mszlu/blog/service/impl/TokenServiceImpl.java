@@ -25,6 +25,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public SysUser checkToken(String token) {
+
         if (StringUtils.isBlank(token)) {
             return null;
         }

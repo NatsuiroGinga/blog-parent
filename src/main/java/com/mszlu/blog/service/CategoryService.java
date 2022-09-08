@@ -19,7 +19,7 @@ public interface CategoryService {
      * @return com.mszlu.blog.vo.CategoryVo
      **/
 
-    CategoryVo findCategoryById(Integer categoryId);
+    CategoryVo findCategoryById(Long categoryId);
 
     /**
      * 查询所有类别
@@ -28,4 +28,5 @@ public interface CategoryService {
      * @return com.mszlu.blog.vo.Result
      **/
     Result findAll();
+
 }

@@ -2,25 +2,32 @@ package com.mszlu.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mszlu.blog.dos.Archives;
 import com.mszlu.blog.mapper.ArticleBodyMapper;
+import com.mszlu.blog.mapper.ArticleTagMapper;
 import com.mszlu.blog.pojo.Article;
 import com.mszlu.blog.pojo.ArticleBody;
+import com.mszlu.blog.pojo.ArticleTag;
+import com.mszlu.blog.pojo.SysUser;
 import com.mszlu.blog.service.*;
 import com.mszlu.blog.mapper.ArticleMapper;
+import com.mszlu.blog.utils.UserThreadLocal;
 import com.mszlu.blog.vo.ArticleBodyVo;
 import com.mszlu.blog.vo.ArticleVo;
 import com.mszlu.blog.vo.Result;
+import com.mszlu.blog.vo.TagVo;
+import com.mszlu.blog.vo.params.ArticleBodyParam;
+import com.mszlu.blog.vo.params.ArticleParam;
 import com.mszlu.blog.vo.params.PageParams;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +49,9 @@ public class ArticleServiceImpl implements ArticleService{
 
     @Autowired
     private ThreadService threadService;
+
+    @Autowired
+    private ArticleTagMapper articleTagMapper;
 
     @Override
     public Result listArticle(@NotNull PageParams pageParams) {
@@ -100,6 +110,58 @@ public class ArticleServiceImpl implements ArticleService{
         return Result.success(articleVo);
     }
 
+    @Override
+    public Result publish(ArticleParam articleParam) {
+
+        /*
+        * 1. 发布文章, new article
+        * 2. 作者id
+        * 3. 标签, 加入关联表
+        * 4. 内容, 加入关联表
+        * */
+
+        final SysUser sysUser = UserThreadLocal.get();
+        final Article article = new Article();
+        article.setAuthorId(sysUser.getId());
+        article.setWeight(Article.Article_Common);
+        article.setViewCounts(0);
+        article.setTitle(articleParam.getTitle());
+        article.setSummary(articleParam.getSummary());
+        article.setCreateDate(System.currentTimeMillis());
+        article.setCommentCounts(0);
+        article.setCategoryId(articleParam.getCategory().getId());
+
+        // 插入文章, 获取id
+        articleMapper.insert(article);
+
+        final List<TagVo> tags = articleParam.getTags();
+        final Long articleId = article.getId();
+
+        if (!CollectionUtils.isEmpty(tags)) {
+            for (TagVo tagVo : tags) {
+                final ArticleTag articleTag = new ArticleTag();
+                articleTag.setTagId(tagVo.getId());
+                articleTag.setArticleId(articleId);
+                articleTagMapper.insert(articleTag);
+            }
+        }
+
+        final ArticleBody articleBody = new ArticleBody();
+        articleBody.setArticleId(articleId);
+        final ArticleBodyParam body = articleParam.getBody();
+        articleBody.setContent(body.getContent());
+        articleBody.setContentHtml(body.getContentHtml());
+        articleBodyMapper.insert(articleBody);
+
+        article.setBodyId(articleBody.getId());
+        articleMapper.updateById(article);
+
+        final HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("id", String.valueOf(articleId));
+
+        return Result.success(hashMap);
+    }
+
     private List<ArticleVo> copyList(@NotNull List<Article> records, boolean isTag, boolean isAuthor) {
 
         return records.stream()
@@ -145,7 +207,7 @@ public class ArticleServiceImpl implements ArticleService{
         }
 
         if (isCategory) {
-            final Integer categoryId = article.getCategoryId();
+            final Long categoryId = article.getCategoryId();
             articleVo.setCategory(categoryService.findCategoryById(categoryId));
         }
 

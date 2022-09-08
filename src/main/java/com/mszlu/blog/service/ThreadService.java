@@ -23,7 +23,7 @@ public class ThreadService {
 
         final Article articleUpdate = new Article();
         final Integer viewCounts = article.getViewCounts();
-        articleUpdate.setViewCounts(viewCounts);
+        articleUpdate.setViewCounts(viewCounts + 1);
         final LambdaUpdateWrapper<Article> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Article::getId, article.getId())
                         .eq(Article::getViewCounts, article.getViewCounts());

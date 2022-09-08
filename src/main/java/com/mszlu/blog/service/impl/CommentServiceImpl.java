@@ -11,8 +11,6 @@ import com.mszlu.blog.vo.CommentVo;
 import com.mszlu.blog.vo.Result;
 import com.mszlu.blog.vo.UserVo;
 import com.mszlu.blog.vo.params.CommentParam;
-import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +58,7 @@ public class CommentServiceImpl implements CommentService {
         final Comment comment = new Comment();
         comment.setAuthorId(sysUser.getId());
         comment.setArticleId(commentParam.getArticleId());
-        comment.setContent(comment.getContent());
+        comment.setContent(commentParam.getContent());
         comment.setCreateDate(System.currentTimeMillis());
         final Long parent = commentParam.getParent();
 
@@ -72,13 +70,12 @@ public class CommentServiceImpl implements CommentService {
 
         comment.setParentId(parent == null ? 0 : parent);
         final Long toUserId = commentParam.getToUserId();
-        comment.setToUid(toUserId);
+        comment.setToUid(toUserId == null ? 0 : toUserId);
         commentMapper.insert(comment);
 
         return Result.success(null);
     }
 
-    @Contract(pure = true)
     private List<CommentVo> copyList(@NotNull List<Comment> comments) {
 
         return comments.stream()
@@ -87,7 +84,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @NotNull
-    @Contract(pure = true)
     private CommentVo copy(Comment comment) {
 
         final CommentVo commentVo = new CommentVo();
@@ -98,7 +94,7 @@ public class CommentServiceImpl implements CommentService {
         commentVo.setAuthor(author);
         // 子评论
         final Integer level = comment.getLevel();
-        if (1 == level) {
+        if (level == 1) {
             final Long id = comment.getId();
             List<CommentVo> commentVoList = findCommentsByParentId(id);
             commentVo.setChildren(commentVoList);
@@ -117,7 +113,7 @@ public class CommentServiceImpl implements CommentService {
 
         final LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Comment::getParentId, id);
-        queryWrapper.eq(Comment::getLevel, 1);
+        queryWrapper.eq(Comment::getLevel, 2);
 
         return copyList(commentMapper.selectList(queryWrapper));
     }

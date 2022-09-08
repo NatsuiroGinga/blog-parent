@@ -2,9 +2,11 @@ package com.mszlu.blog.controller;
 
 import com.mszlu.blog.service.ArticleService;
 import com.mszlu.blog.vo.Result;
+import com.mszlu.blog.vo.params.ArticleParam;
 import com.mszlu.blog.vo.params.PageParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 
 /**
  * @author ginga
@@ -59,4 +61,8 @@ public class ArticleController {
         return articleService.findArticleById(articleId);
     }
 
+    @PostMapping("publish")
+    public Result publish(@RequestBody ArticleParam articleParam) {
+        return articleService.publish(articleParam);
+    }
 }
