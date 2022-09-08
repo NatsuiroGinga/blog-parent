@@ -1,12 +1,20 @@
 package com.mszlu.blog.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mszlu.blog.mapper.CategoryMapper;
 import com.mszlu.blog.pojo.Category;
 import com.mszlu.blog.service.CategoryService;
 import com.mszlu.blog.vo.CategoryVo;
+import com.mszlu.blog.vo.Result;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author ginga
@@ -27,6 +35,26 @@ public class CategoryServiceImpl implements CategoryService {
         final CategoryVo categoryVo = new CategoryVo();
         BeanUtils.copyProperties(category, categoryVo);
 
+        return categoryVo;
+    }
+
+    @Override
+    public Result findAll() {
+        final List<Category> categories = categoryMapper.selectList(new LambdaQueryWrapper<>());
+
+        return Result.success(copyList(categories));
+    }
+
+    private List<CategoryVo> copyList(@NotNull List<Category> categories) {
+        return categories.stream()
+                .map(this::copy)
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private CategoryVo copy(Category category) {
+        final CategoryVo categoryVo = new CategoryVo();
+        BeanUtils.copyProperties(category, categoryVo);
         return categoryVo;
     }
 
