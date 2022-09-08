@@ -1,10 +1,7 @@
 package com.mszlu.blog.service;
 
-import com.mszlu.blog.pojo.Tag;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.mszlu.blog.vo.Result;
 import com.mszlu.blog.vo.TagVo;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -32,4 +29,6 @@ public interface TagService {
      * @return com.mszlu.blog.vo.Result
      **/
     Result hots(int limit);
+
+    Result finAll();
 }
