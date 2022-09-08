@@ -1,8 +1,8 @@
 package com.mszlu.blog.service;
 
 import com.mszlu.blog.pojo.SysUser;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.mszlu.blog.vo.Result;
+import com.mszlu.blog.vo.UserVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -43,4 +43,6 @@ public interface SysUserService {
     SysUser findUserByAccount(String account);
 
     void save(SysUser user);
+
+    UserVo findUserVoById(Long authorId);
 }

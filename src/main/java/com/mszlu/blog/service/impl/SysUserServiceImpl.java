@@ -8,6 +8,7 @@ import com.mszlu.blog.service.TokenService;
 import com.mszlu.blog.vo.ErrorCode;
 import com.mszlu.blog.vo.LoginUserVo;
 import com.mszlu.blog.vo.Result;
+import com.mszlu.blog.vo.UserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,10 +69,6 @@ public class SysUserServiceImpl implements SysUserService {
 
         final LoginUserVo loginUserVo = new LoginUserVo();
         BeanUtils.copyProperties(sysUser, loginUserVo);
-//        loginUserVo.setId(sysUser.getId());
-//        loginUserVo.setAvatar(sysUser.getAvatar());
-//        loginUserVo.setNickname(sysUser.getNickname());
-//        loginUserVo.setAccount(sysUser.getAccount());
 
         return Result.success(loginUserVo);
     }
@@ -87,5 +84,21 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public void save(SysUser user) {
         sysUserMapper.insert(user);
+    }
+
+    @Override
+    public UserVo findUserVoById(Long authorId) {
+
+        SysUser sysUser = sysUserMapper.selectById(authorId);
+        if (sysUser == null) {
+            sysUser = new SysUser();
+            sysUser.setId(1L);
+            sysUser.setAvatar("/static/img/logo.b3a48c0.png");
+            sysUser.setNickname("码神之路");
+        }
+        final UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(sysUser, userVo);
+
+        return userVo;
     }
 }

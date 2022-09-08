@@ -7,11 +7,8 @@ import com.mszlu.blog.dos.Archives;
 import com.mszlu.blog.mapper.ArticleBodyMapper;
 import com.mszlu.blog.pojo.Article;
 import com.mszlu.blog.pojo.ArticleBody;
-import com.mszlu.blog.service.ArticleService;
+import com.mszlu.blog.service.*;
 import com.mszlu.blog.mapper.ArticleMapper;
-import com.mszlu.blog.service.CategoryService;
-import com.mszlu.blog.service.SysUserService;
-import com.mszlu.blog.service.TagService;
 import com.mszlu.blog.vo.ArticleBodyVo;
 import com.mszlu.blog.vo.ArticleVo;
 import com.mszlu.blog.vo.Result;
@@ -42,6 +39,9 @@ public class ArticleServiceImpl implements ArticleService{
 
     @Autowired
     private SysUserService sysUserService;
+
+    @Autowired
+    private ThreadService threadService;
 
     @Override
     public Result listArticle(@NotNull PageParams pageParams) {
@@ -96,7 +96,7 @@ public class ArticleServiceImpl implements ArticleService{
         * */
         final Article article = articleMapper.selectById(articleId);
         final ArticleVo articleVo = copy(article, true, true, true, true);
-
+        threadService.updateArticleViewCount(articleMapper, article);
         return Result.success(articleVo);
     }
 

@@ -51,12 +51,10 @@ public class ArticleController {
 
     @PostMapping("listArchives")
     public Result listArchives() {
-        System.out.println("**************************************************************" +
-                "***************************************************************************");
         return articleService.listArchives();
     }
 
-    @PostMapping("articles/view/{id}")
+    @PostMapping("view/{id}")
     public Result findArticleById(@PathVariable("id") Long articleId) {
         return articleService.findArticleById(articleId);
     }
