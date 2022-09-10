@@ -29,4 +29,5 @@ public interface CategoryService {
      **/
     Result findAll();
 
+    Result findAllDetail();
 }

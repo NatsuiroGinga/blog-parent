@@ -37,4 +37,9 @@ public class TagsController {
         return tagService.finAll();
     }
 
+    @GetMapping("detail")
+    public Result findAllDetail() {
+        return tagService.findAllDetail();
+    }
+
 }
