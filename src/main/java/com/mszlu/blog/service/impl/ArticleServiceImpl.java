@@ -61,9 +61,10 @@ public class ArticleServiceImpl implements ArticleService{
         final Long categoryId = pageParams.getCategoryId();
 
         // 判断有没有按分类查询
-        if (categoryId != null) {
-            queryWrapper.eq(Article::getCategoryId, categoryId);
-        }
+        queryWrapper.eq(categoryId != null, Article::getCategoryId, categoryId);
+//        if (categoryId != null) {
+//            queryWrapper.eq(Article::getCategoryId, categoryId);
+//        }
 
         final Long tagId = pageParams.getTagId();
         // 判断有没有按标签查询
