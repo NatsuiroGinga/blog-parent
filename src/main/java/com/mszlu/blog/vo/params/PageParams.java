@@ -21,4 +21,8 @@ public class PageParams {
      */
     private int pageSize = 10;
 
+    private Long categoryId;
+
+    private Long tagId;
+
 }

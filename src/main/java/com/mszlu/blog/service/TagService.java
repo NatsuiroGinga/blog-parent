@@ -33,4 +33,6 @@ public interface TagService {
     Result finAll();
 
     Result findAllDetail();
+
+    Result findDetailById(Long id);
 }

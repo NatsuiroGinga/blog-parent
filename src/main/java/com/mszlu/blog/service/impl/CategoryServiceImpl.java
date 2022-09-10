@@ -54,6 +54,14 @@ public class CategoryServiceImpl implements CategoryService {
         return Result.success(categories);
     }
 
+    @Override
+    public Result categoryDetailById(Long id) {
+
+        final Category category = categoryMapper.selectById(id);
+
+        return Result.success(category);
+    }
+
     private List<CategoryVo> copyList(@NotNull List<Category> categories) {
         return categories.stream()
                 .map(this::copy)

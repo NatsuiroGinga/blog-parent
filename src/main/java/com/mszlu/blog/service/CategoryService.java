@@ -30,4 +30,6 @@ public interface CategoryService {
     Result findAll();
 
     Result findAllDetail();
+
+    Result categoryDetailById(Long id);
 }
