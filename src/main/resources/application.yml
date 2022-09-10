@@ -7,8 +7,12 @@ spring:
   redis:
     host: localhost
     port: 6379
+  servlet:
+    multipart:
+      max-request-size: 20MB # 上传文件总最大值
+      max-file-size: 2MB # 单个文件最大值
 
-  #    数据库配置
+# 数据库配置
   datasource:
     url: jdbc:mysql://localhost:3306/mszl?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=Asia/Shanghai
     username: root
@@ -18,9 +22,7 @@ spring:
 # mybatis-plus
 mybatis-plus:
   configuration:
-#    日志标准输出
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 日志标准输出
   global-config:
     db-config:
-#      表名前缀
-      table-prefix: ms_
+      table-prefix: ms_ # 表名前缀
