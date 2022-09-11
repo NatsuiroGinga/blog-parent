@@ -1,9 +1,12 @@
 package com.mszlu.blog.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mszlu.blog.dos.Archives;
 import com.mszlu.blog.pojo.Article;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -17,6 +20,12 @@ import java.util.List;
 public interface ArticleMapper extends BaseMapper<Article> {
 
     List<Archives> listArchives();
+
+    IPage<Article> listArticle(Page<Article> page,
+                               @Param("categoryId") Long categoryId,
+                               @Param("tagId") Long tagId,
+                               @Param("year") String year,
+                               @Param("month") String month);
 }
 
 

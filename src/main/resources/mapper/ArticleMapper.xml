@@ -32,4 +32,30 @@
         FROM ms_article
         group by year, month;
     </select>
+    <!--
+    IPage<Article> listArticle(Page<Article> page,
+                               Long categoryId,
+                               Long tagId,
+                               String year,
+                               String month);
+    -->
+    <select id="listArticle" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM ms_article
+        <where>
+            1 = 1
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="tagId != null">
+                and id in (select article_id from ms_article_tag where tag_id = #{tagId})
+            </if>
+            <if test="year != null and year.length > 0 and month != null and month.length > 0">
+                and (FROM_UNIXTIME(create_date / 1000, '%Y'))  = #{year}
+                and (FROM_UNIXTIME(create_date / 1000, '%m')) = #{month}
+            </if>
+        </where>
+        ORDER BY weight desc
+    </select>
 </mapper>

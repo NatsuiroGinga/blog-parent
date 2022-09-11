@@ -1,6 +1,7 @@
 package com.mszlu.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mszlu.blog.dos.Archives;
 import com.mszlu.blog.mapper.ArticleBodyMapper;
@@ -53,43 +54,56 @@ public class ArticleServiceImpl implements ArticleService{
     @Autowired
     private ArticleTagMapper articleTagMapper;
 
-    @Override
-    public Result listArticle(@NotNull PageParams pageParams) {
-
-        final Page<Article> page = new Page<>(pageParams.getPage(), pageParams.getPageSize());
-        final LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
-        final Long categoryId = pageParams.getCategoryId();
-
-        // 判断有没有按分类查询
-        queryWrapper.eq(categoryId != null, Article::getCategoryId, categoryId);
-//        if (categoryId != null) {
-//            queryWrapper.eq(Article::getCategoryId, categoryId);
+//    @Override
+//    public Result listArticle(@NotNull PageParams pageParams) {
+//
+//        final Page<Article> page = new Page<>(pageParams.getPage(), pageParams.getPageSize());
+//        final LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+//        final Long categoryId = pageParams.getCategoryId();
+//
+//        // 判断有没有按分类查询
+//        queryWrapper.eq(categoryId != null, Article::getCategoryId, categoryId);
+//
+//        final Long tagId = pageParams.getTagId();
+//        // 判断有没有按标签查询
+//        if (tagId != null) {
+//            // 加入标签 条件查询
+//            final LambdaQueryWrapper<ArticleTag> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+//            lambdaQueryWrapper.eq(ArticleTag::getTagId, tagId);
+//            final List<ArticleTag> articleTags = articleTagMapper.selectList(lambdaQueryWrapper);
+//
+//            final List<Long> articleIdList = articleTags.stream()
+//                                                        .map(ArticleTag::getArticleId)
+//                                                        .collect(Collectors.toList());
+//
+//            if (!CollectionUtils.isEmpty(articleIdList)) {
+//                queryWrapper.in(Article::getId, articleIdList);
+//            }
 //        }
+//
+//        // 按照时间倒序排列
+//        queryWrapper.orderByDesc(Article::getWeight);
+//        queryWrapper.orderByDesc(Article::getCreateDate);
+//        final Page<Article> articlePage = articleMapper.selectPage(page, queryWrapper);
+//        final List<Article> records = articlePage.getRecords();
+//        List<ArticleVo> articleVoList = copyList(records, true, true);
+//
+//        return Result.success(articleVoList);
+//    }
 
-        final Long tagId = pageParams.getTagId();
-        // 判断有没有按标签查询
-        if (tagId != null) {
-            // 加入标签 条件查询
-            final LambdaQueryWrapper<ArticleTag> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-            lambdaQueryWrapper.eq(ArticleTag::getTagId, tagId);
-            final List<ArticleTag> articleTags = articleTagMapper.selectList(lambdaQueryWrapper);
+    @Override
+    public Result listArticle(PageParams pageParams) {
+        final Page<Article> page = new Page<>(pageParams.getPage(), pageParams.getPageSize());
+        final IPage<Article> articleIPage = articleMapper.listArticle(
+                page,
+                pageParams.getCategoryId(),
+                pageParams.getTagId(),
+                pageParams.getYear(),
+                pageParams.getMonth());
 
-            final List<Long> articleIdList = articleTags.stream()
-                                                        .map(ArticleTag::getArticleId)
-                                                        .collect(Collectors.toList());
+        final List<Article> articleList = articleIPage.getRecords();
 
-            if (!CollectionUtils.isEmpty(articleIdList)) {
-                queryWrapper.in(Article::getId, articleIdList);
-            }
-        }
-
-        // 按照时间倒序排列
-        queryWrapper.orderByDesc(Article::getWeight, Article::getCreateDate);
-        final Page<Article> articlePage = articleMapper.selectPage(page, queryWrapper);
-        final List<Article> records = articlePage.getRecords();
-        List<ArticleVo> articleVoList = copyList(records, true, true);
-
-        return Result.success(articleVoList);
+        return Result.success(copyList(articleList, true, true));
     }
 
     @Override
@@ -195,14 +209,14 @@ public class ArticleServiceImpl implements ArticleService{
 
     }
 
-    private List<ArticleVo> copyList(@NotNull List<Article> records, boolean isTag, boolean isAuthor,
-                                     boolean isBody, boolean isCategory) {
-
-        return records.stream()
-                .map(article -> copy(article, isTag, isAuthor, isBody, isCategory))
-                .collect(Collectors.toList());
-
-    }
+//    private List<ArticleVo> copyList(@NotNull List<Article> records, boolean isTag, boolean isAuthor,
+//                                     boolean isBody, boolean isCategory) {
+//
+//        return records.stream()
+//                .map(article -> copy(article, isTag, isAuthor, isBody, isCategory))
+//                .collect(Collectors.toList());
+//
+//    }
 
     @Autowired
     private CategoryService categoryService;

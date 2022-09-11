@@ -25,4 +25,14 @@ public class PageParams {
 
     private Long tagId;
 
+    private String year;
+
+    private String month;
+
+    public String getMonth() {
+        if (month != null && month.length() == 1) {
+            return "0" + month;
+        }
+        return month;
+    }
 }
