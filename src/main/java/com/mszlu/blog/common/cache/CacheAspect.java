@@ -1,8 +1,8 @@
 package com.mszlu.blog.common.cache;
 
 import com.alibaba.fastjson.JSON;
+import com.mszlu.blog.vo.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.cli.Digest;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
+import java.time.Duration;
 
 /**
  * @author ginga
@@ -72,11 +72,24 @@ public class CacheAspect {
             String redisKey = name + "::" + className + "::" + methodName + "::" + params;
             String redisValue = redisTemplate.opsForValue().get(redisKey);
 
+            if (StringUtils.isNotEmpty(redisValue)) {
+                log.info("走了缓存, {}, {}", className, methodName);
+                return JSON.parseObject(redisValue, Result.class);
+            }
+
+            final Object result = point.proceed();
+            redisTemplate.opsForValue()
+                    .set(redisKey, JSON.toJSONString(result), Duration.ofMillis(expire));
+            log.info("存入缓存, {}, {}", className, methodName);
+
+            return result;
 
         } catch (Exception e) {
-            e.printStackTrace();;
+            e.printStackTrace();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
         }
 
-        return null;
+        return Result.fail(-999, "系统错误");
     }
 }
