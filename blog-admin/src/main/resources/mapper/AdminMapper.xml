@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mszlu.blogadmin.mapper.AdminMapper">
+
+    <!--List<Permission> findPermissionByAdminId(Long adminId);-->
+    <select id="findPermissionByAdminId" resultType="com.mszlu.blogadmin.pojo.Permission">
+        SELECT *
+        FROM ms_permission
+        where id in (
+            SELECT permission_id
+            FROM ms_admin_permission
+            WHERE admin_id = #{adminId}
+            )
+    </select>
+
+</mapper>

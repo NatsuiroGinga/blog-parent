@@ -11,8 +11,6 @@ spring:
     multipart:
       max-request-size: 20MB # 上传文件总最大值
       max-file-size: 2MB # 单个文件最大值
-
-# 数据库配置
   datasource:
     url: jdbc:mysql://localhost:3306/mszl?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=Asia/Shanghai
     username: root

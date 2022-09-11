@@ -146,6 +146,7 @@ public class ArticleServiceImpl implements ArticleService{
         final Article article = articleMapper.selectById(articleId);
         final ArticleVo articleVo = copy(article, true, true, true, true);
         threadService.updateArticleViewCount(articleMapper, article);
+
         return Result.success(articleVo);
     }
 
